@@ -1,11 +1,10 @@
 from breezypythongui import EasyFrame, EasyDialog
 from tkinter import PhotoImage
+from tkinter import messagebox
 
 # Adding a drop-down menu using the ttk.Combobox widget from the tkinter module. 
 from tkinter import ttk
 import os
-
-#testing again
 
 class MainWindow(EasyFrame):
 
@@ -54,27 +53,48 @@ class AddConsoleWindow(EasyDialog):
 
     def body(self, master):
         self.addLabel(master, text="Console Name:", row=0, column=0)
-        self.consoleName = self.addTextField(master, text="", row=0, column=1)
-        self.addLabel(master, text="Storage on device:", row=1, column=0)
-        self.storage = self.addTextField(master, text="", row=1, column=1)
-        self.addLabel(master, text="Manufacturer:", row=2, column=0)
-        self.manufacturer = self.addTextField(master, text="", row=2, column=1)
-        self.addLabel(master, text="Purchase Date:", row=3, column=0)
-        self.purchaseDate = self.addTextField(master, text="", row=3, column=1)
-        self.addLabel(master, text="Purchase Price:", row=4, column=0)
-        self.purchasePrice = self.addTextField(master, text="", row=4, column=1)
+
+        self.addLabel(master, text="Console Name:", row=0, column=0) 
+        self.consoleOptions = ["PlayStation 5", "Xbox Series X", "Nintendo Switch", "PlayStation 4", "Xbox One", "Other"] 
+        self.consoleName = ttk.Combobox(master, values=self.consoleOptions) 
+        self.consoleName.grid(row=0, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Storage on device:", row=1, column=0) 
+        self.storageOptions = ["500GB", "1TB", "2TB", "Other"] 
+        self.storage = ttk.Combobox(master, values=self.storageOptions) 
+        self.storage.grid(row=1, column=1, sticky="NSEW")
+        
+        self.addLabel(master, text="Manufacturer:", row=2, column=0) 
+        self.manufacturerOptions = ["Sony", "Microsoft", "Nintendo", "Other"] 
+        self.manufacturer = ttk.Combobox(master, values=self.manufacturerOptions) 
+        self.manufacturer.grid(row=2, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Purchase Date:", row=3, column=0) 
+        self.purchaseDateOptions = ["2020", "2021", "2022", "2023", "2024", "Other"] 
+        self.purchaseDate = ttk.Combobox(master, values=self.purchaseDateOptions) 
+        self.purchaseDate.grid(row=3, column=1, sticky="NSEW")
+        
+        self.addLabel(master, text="Purchase Price:", row=4, column=0) 
+        self.purchasePriceOptions = ["<$300", "$300-$500", ">$500", "Other"] 
+        self.purchasePrice = ttk.Combobox(master, values=self.purchasePriceOptions) 
+        self.purchasePrice.grid(row=4, column=1, sticky="NSEW")
         
         self.addButton(master, text="Save", row=5, column=0, command=self.saveConsole)
         self.addButton(master, text="Cancel", row=5, column=1, command=self.cancel)
 
     def saveConsole(self):
+        # Validate inputs
+        if not self.consoleName.get() or not self.storage.get() or not self.manufacturer.get() or not self.purchaseDate.get() or not self.purchasePrice.get():
+            messagebox.showerror("Error", "All fields are required.")
+            return
+
         # Save the console details to the parent list
         console = {
-            "name": self.consoleName.getText(),
-            "storage": self.storage.getText(),
-            "manufacturer": self.manufacturer.getText(),
-            "purchase_date": self.purchaseDate.getText(),
-            "purchase_price": self.purchasePrice.getText()
+            "name": self.consoleName.get(),
+            "storage": self.storage.get(),
+            "manufacturer": self.manufacturer.get(),
+            "purchase_date": self.purchaseDate.get(),
+            "purchase_price": self.purchasePrice.get()
         }
         self.parent.consoleCollection.append(console)
         self.parent.messageBox("Info", "Console saved successfully.")
@@ -120,10 +140,15 @@ class SearchWindow(EasyDialog):
         EasyDialog.__init__(self, parent, "Search Collection")
 
     def body(self, master):
-        self.addLabel(master, text="Search by Console Name:", row=0, column=0)
-        self.consoleName = self.addTextField(master, text="", row=0, column=1)
-        self.addLabel(master, text="Manufacturer:", row=1, column=0)
-        self.manufacturer = self.addTextField(master, text="", row=1, column=1)
+        self.addLabel(master, text="Search by Console Name:", row=0, column=0) 
+        self.consoleOptions = ["PlayStation 5", "Xbox Series X", "Nintendo Switch", "PlayStation 4", "Xbox One", "Other"] 
+        self.consoleName = ttk.Combobox(master, values=self.consoleOptions) 
+        self.consoleName.grid(row=0, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Manufacturer:", row=1, column=0) 
+        self.manufacturerOptions = ["Sony", "Microsoft", "Nintendo", "Other"] 
+        self.manufacturer = ttk.Combobox(master, values=self.manufacturerOptions) 
+        self.manufacturer.grid(row=1, column=1, sticky="NSEW")
         
         self.addButton(master, text="Search", row=2, column=0, command=self.performSearch)
         self.addButton(master, text="Back", row=2, column=1, command=self.destroy)
@@ -132,10 +157,23 @@ class SearchWindow(EasyDialog):
 
     def performSearch(self):
         # Perform search and display results
-        search_name = self.consoleName.getText().lower()
-        search_manufacturer = self.manufacturer.getText().lower()
+        search_name = self.consoleName.get().lower()
+        search_manufacturer = self.manufacturer.get().lower()
+
+        if not search_name and not search_manufacturer:
+            results = self.collection
+
+        elif search_name and search_manufacturer:
+            results = [console for console in self.collection if search_name == console['name'].lower() and search_manufacturer == console['manufacturer'].lower()]
         
-        results = [console for console in self.collection if search_name in console['name'].lower() or search_manufacturer in console['manufacturer'].lower()]
+        elif search_name:
+            results = [console for console in self.collection if search_name == console['name'].lower()]
+        
+        elif search_manufacturer:
+            results = [console for console in self.collection if search_manufacturer == console['manufacturer'].lower()]
+
+
+        #results = [console for console in self.collection if search_name in console['name'].lower() or search_manufacturer in console['manufacturer'].lower()]
         result_text = "\n".join([f"{console['name']} - {console['storage']} - {console['manufacturer']} - {console['purchase_date']} - ${console['purchase_price']}" for console in results])
         
         self.results.setText(result_text if result_text else "No results found.")
@@ -146,10 +184,15 @@ class ReportsWindow(EasyDialog):
         EasyDialog.__init__(self, parent, "Collection Reports")
 
     def body(self, master):
-        self.addLabel(master, text="Report Type:", row=0, column=0)
-        self.reportType = self.addTextField(master, text="", row=0, column=1)
-        self.addLabel(master, text="Time Period:", row=1, column=0)
-        self.timePeriod = self.addTextField(master, text="", row=1, column=1)
+        self.addLabel(master, text="Report Type:", row=0, column=0) 
+        self.reportOptions = ["Yearly", "Monthly", "Weekly", "Custom"] 
+        self.reportType = ttk.Combobox(master, values=self.reportOptions) 
+        self.reportType.grid(row=0, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Time Period:", row=1, column=0) 
+        self.timePeriodOptions = ["2020", "2021", "2022", "2023", "2024", "Other"] 
+        self.timePeriod = ttk.Combobox(master, values=self.timePeriodOptions) 
+        self.timePeriod.grid(row=1, column=1, sticky="NSEW")
         
         self.addButton(master, text="Generate Report", row=2, column=0, command=self.generateReport)
         self.addButton(master, text="Back", row=2, column=1, command=self.destroy)
@@ -157,6 +200,12 @@ class ReportsWindow(EasyDialog):
         self.reportArea = self.addTextArea(master, text="", row=3, column=0, columnspan=2)
 
     def generateReport(self):
+
+        # Validate inputs 
+        if not self.reportType.getText() or not self.timePeriod.getText(): 
+            messagebox.showerror("Error", "All fields are required.") 
+            return
+
         # Add code to generate report and display it
         self.reportArea.setText("Report placeholder.")
 
@@ -167,11 +216,19 @@ class GoalsWindow(EasyDialog):
 
     def body(self, master):
         self.addLabel(master, text="Goal Name:", row=0, column=0)
-        self.goalName = self.addTextField(master, text="", row=0, column=1)
-        self.addLabel(master, text="Console/Accessory:", row=1, column=0)
-        self.consoleAccessory = self.addTextField(master, text="", row=1, column=1)
-        self.addLabel(master, text="Target Acquisition Date:", row=2, column=0)
-        self.targetDate = self.addTextField(master, text="", row=2, column=1)
+        self.goalOptions = ["Complete Collection", "Specific Console", "Limited Edition", "Other"] 
+        self.goalName = ttk.Combobox(master, values=self.goalOptions) 
+        self.goalName.grid(row=0, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Console/Accessory:", row=1, column=0) 
+        self.consoleOptions = ["PlayStation 5", "Xbox Series X", "Nintendo Switch", "PlayStation 4", "Xbox One", "Other"] 
+        self.consoleAccessory = ttk.Combobox(master, values=self.consoleOptions) 
+        self.consoleAccessory.grid(row=1, column=1, sticky="NSEW") 
+
+        self.addLabel(master, text="Target Acquisition Date:", row=2, column=0) 
+        self.targetDateOptions = ["2020", "2021", "2022", "2023", "2024", "Other"] 
+        self.targetDate = ttk.Combobox(master, values=self.targetDateOptions) 
+        self.targetDate.grid(row=2, column=1, sticky="NSEW")
         
         self.addButton(master, text="Edit", row=3, column=0, command=self.editGoal)
         self.addButton(master, text="Save", row=3, column=1, command=self.saveGoal)
@@ -182,8 +239,14 @@ class GoalsWindow(EasyDialog):
         self.parent.messageBox("Info", "Edit goal function.")
 
     def saveGoal(self):
+        # Validate inputs
+        if not self.goalName.getText() or not self.consoleAccessory.getText() or not self.targetDate.getText():
+            messagebox.showerror("Error", "All fields are required.")
+            return
+
         # Add code to save a goal
         self.parent.messageBox("Info", "Goal saved successfully.")
         self.destroy()
+
 
 MainWindow().mainloop()
