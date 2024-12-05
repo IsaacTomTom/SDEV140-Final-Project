@@ -1,5 +1,8 @@
 from breezypythongui import EasyFrame, EasyDialog
 from tkinter import PhotoImage
+
+# Adding a drop-down menu using the ttk.Combobox widget from the tkinter module. 
+from tkinter import ttk
 import os
 
 #testing again
@@ -83,8 +86,9 @@ class AddConsoleWindow(EasyDialog):
 class CollectionViewWindow(EasyDialog):
 
     def __init__(self, parent, collection):
-        EasyDialog.__init__(self, parent, "Console Collection")
         self.collection = collection
+        EasyDialog.__init__(self, parent, "Console Collection")
+        
 
     def body(self, master):
         self.addLabel(master, text="Console Collection", row=0, column=0, columnspan=2)
@@ -112,8 +116,8 @@ class CollectionViewWindow(EasyDialog):
 class SearchWindow(EasyDialog):
 
     def __init__(self, parent, collection):
-        EasyDialog.__init__(self, parent, "Search Collection")
         self.collection = collection
+        EasyDialog.__init__(self, parent, "Search Collection")
 
     def body(self, master):
         self.addLabel(master, text="Search by Console Name:", row=0, column=0)
