@@ -1,3 +1,6 @@
+Important: 
+Put the console_collection.txt file into your downloads folder, otherwise it may not work.
+
 Topic:
 Gaming Console Collection Tracker
 
