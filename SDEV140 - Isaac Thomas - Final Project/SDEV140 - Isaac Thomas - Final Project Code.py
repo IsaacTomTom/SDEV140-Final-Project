@@ -30,18 +30,20 @@ class MainWindow(EasyFrame):
     def __init__(self):
         # Initialize the main window with a title
         EasyFrame.__init__(self, title="Game Vault Collector")
-        self.setSize(400, 500)
+        self.setSize(500, 700)
         self.button_font = font.Font(size=14, weight='bold')
 
+        # Set the background color of the window 
+        self["background"] = "#3c507a"
 
         # Add welcome and instruction labels
         self.addLabel(text="Welcome to Game Vault Collector", row=0, column=0, columnspan=2, sticky="NSEW", font=self.button_font)
         self.addLabel(text="Please select an option below:", row=2, column=0, columnspan=2, sticky="NSEW", font=self.button_font)
 
         # Add buttons for different functionalities
-        self.addConsoleButton = self.addButton(text="Add Console", row=3, column=0, command=self.addConsole)
-        self.viewCollectionButton = self.addButton(text="View Collection", row=3, column=1, command=self.viewCollection)
-        self.exitButton = self.addButton(text="Exit", row=4, column=0, columnspan=2, command=self.quit)
+        self.addConsoleButton = self.addButton(text="Add Console", row=4, column=0, command=self.addConsole)
+        self.viewCollectionButton = self.addButton(text="View Collection", row=4, column=1, command=self.viewCollection)
+        self.exitButton = self.addButton(text="Exit", row=5, column=0, columnspan=2, command=self.quit)
 
         self.addConsoleButton.configure(width=20, height=2, font=self.button_font)
         self.viewCollectionButton.configure(width=20, height=2, font=self.button_font)
@@ -56,8 +58,28 @@ class MainWindow(EasyFrame):
         imageLabel = self.addLabel(text="", row=1, column=0, columnspan=2)
         self.logo = PhotoImage(file=os.path.join(script_dir, "logo.png"))
         imageLabel["image"] = self.logo
-        # self.consoleIcon = PhotoImage(file="console.png")
-        # self.addLabel("", row=1, column=2).addImage(self.consoleIcon)
+
+        try:
+            imageGameIcon = self.addLabel(text="Console Icon", row=3, column=0)
+            self.gameIcon = PhotoImage(file=os.path.join(script_dir, "gameIcon.png"))
+            self.resizedGameImage = self.gameIcon.subsample(5, 5)  # Adjust the subsample factors as needed
+            imageGameIcon["image"] = self.resizedGameImage
+        except:
+            return
+
+        try:
+            imageSearchIcon = self.addLabel(text="Search Icon", row=3, column=1)
+            self.searchIcon = PhotoImage(file=os.path.join(script_dir, "SearchIcon.png"))
+            self.resizedImageSearchIcon = self.searchIcon.subsample(5, 5)  # Adjust the subsample factors as needed
+            imageSearchIcon["image"] = self.resizedImageSearchIcon
+        except:
+            return
+
+        # Set the images with alternate text 
+        imageGameIcon["image"] = self.resizedGameImage
+        imageGameIcon["text"] = "Game Icon"
+        imageSearchIcon["image"] = self.resizedImageSearchIcon
+        imageSearchIcon["text"] = "Search Image"
 
         # Initialize the collection list
         self.consoleCollection = []
@@ -169,6 +191,7 @@ class AddConsoleWindow(EasyDialog):
         # Initialize the dialog window with the title based on whether it's an edit or add operation
         title = "Edit Gaming Console" if console else "Add Gaming Console"
         EasyDialog.__init__(self, parent, title)
+        
 
     def body(self, master):
         # Add label and dropdown for console name
