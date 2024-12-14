@@ -288,8 +288,9 @@ class AddConsoleWindow(EasyDialog):
         self.exitButton = self.addButton(master, text="Cancel", row=9, column=1, command=self.cancel)
         self.saveButton.configure(width=20, height=2, font=self.button_font)
         self.exitButton.configure(width=20, height=2, font=self.button_font)
-        self.purchaseYear = ttk.Combobox(master, values=self.yearOptions, state='readonly', width=5, font=self.button_font)
-      
+        self.clearFieldsButton = self.addButton(master, text="Reset/Clear All", row=0, column=2, command=self.clearFields)
+        self.clearFieldsButton.configure(width=20, height=2, font=self.button_font)
+        
     def buttonbox(self):
         # Override this method to prevent the default OK/Cancel buttons from appearing.
         pass
