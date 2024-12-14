@@ -258,11 +258,38 @@ class AddConsoleWindow(EasyDialog):
         self.yearOptions = [""] + [str(year) for year in reversed(range(1972, 2026))]
         self.purchaseMonth = ttk.Combobox(master, values=self.monthOptions, state='readonly', width=3, font=self.button_font)
         self.purchaseMonth.grid(row=6, column=1, sticky="NSEW")
+        self.purchaseDay = ttk.Combobox(master, values=self.dayOptions, state='readonly', width=3)
         self.purchaseDay = ttk.Combobox(master, values=self.dayOptions, state='readonly', width=3, font=self.button_font)
         self.purchaseDay.grid(row=6, column=2, sticky="NSEW")
         self.purchaseYear = ttk.Combobox(master, values=self.yearOptions, state='readonly', width=5, font=self.button_font)
-        self
+        self.purchaseYear.grid(row=6, column=3, sticky="NSEW")
 
+        # Add label and entry for purchase price
+        self.addLabel(master, text="Purchase Price:", row=7, column=0, font=self.button_font)
+        self.purchasePrice = ttk.Entry(master, font=self.button_font)
+        self.purchasePrice.grid(row=7, column=1, sticky="NSEW")
+        
+        if self.console:
+            # Populate fields with existing console data if editing an existing entry
+            self.consoleName.set(self.console["name"])
+            self.storage.set(self.console["storage"])
+            self.manufacturer.set(self.console["manufacturer"])
+            self.releaseYear.set(self.console["release_year"])
+            self.color.set(self.console["color"])
+            self.condition.set(self.console["condition"])
+            purchase_date = self.console["purchase_date"].split("-")
+            self.purchaseMonth.set(purchase_date[0])
+            self.purchaseDay.set(purchase_date[1])
+            self.purchaseYear.set(purchase_date[2])
+            self.purchasePrice.insert(0, self.console["purchase_price"])
+
+        # Add Save and Cancel buttons
+        self.saveButton = self.addButton(master, text="Save", row=9, column=0, command=self.saveConsole)
+        self.exitButton = self.addButton(master, text="Cancel", row=9, column=1, command=self.cancel)
+        self.saveButton.configure(width=20, height=2, font=self.button_font)
+        self.exitButton.configure(width=20, height=2, font=self.button_font)
+        self.purchaseYear = ttk.Combobox(master, values=self.yearOptions, state='readonly', width=5, font=self.button_font)
+      
     def buttonbox(self):
         # Override this method to prevent the default OK/Cancel buttons from appearing.
         pass
